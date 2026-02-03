@@ -6,5 +6,6 @@
 #include "./gameover/gameover.h"
 #include "./gameclear/gameclear.h"
 #include "./pause/pause.h"
+#include "./openbox/openbox.h"
 
 #endif

@@ -10,8 +10,8 @@ public:
     Position();
     ~Position();
 
-    int getX();
-    int getY();
+    int getX() const;
+    int getY() const;
     
     // add functions what you need
 

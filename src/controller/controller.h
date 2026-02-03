@@ -2,11 +2,12 @@
 #define CONTROLLER_H
 
 #include <map>
-
+#include <vector>
 #include "enviroment.h"
 #include "../gamecore/gamestate.h"
 #include "../gameobjects/room/room.h"
 #include "../gameobjects/player/player.h"
+#include "../gameobjects/block/block.h"
 #include "../gameprocess/gameprocess.h"
 #include "../gameprocess/gameprocessstate.h"
 
@@ -20,6 +21,10 @@ private:
     std::map<int, Room *> rooms;
     int currentRoomIndex;
 
+    int isegg = 0;
+
+    std::vector <Block *> blocks;
+
     Player *player;
 
     GameProcessState state;
@@ -29,6 +34,7 @@ private:
     void roomChange(int roomIndex);
 
     void stateChange(GameProcessState newState);
+
 
 public:
     Controller();

@@ -1,0 +1,22 @@
+obj/gameprocess/gameover/gameover.o: \
+ src/gameprocess/gameover/gameover.cpp \
+ src/gameprocess/gameover/gameover.h \
+ src/gameprocess/gameover/../gameprocess.h \
+ src/gameprocess/gameover/../../gamecore/gamestate.h \
+ src/gameprocess/gameover/../../gameobjects/player/player.h \
+ src/gameprocess/gameover/../../gameobjects/player/../../gamecore/gamestate.h \
+ src/gameprocess/gameover/../../gameobjects/player/../gameobject.h \
+ src/gameprocess/gameover/../../gameobjects/player/../../functions/position/position.h \
+ src/gameprocess/gameover/../../gameobjects/player/playerstate.h \
+ src/gameprocess/gameover/../../gameobjects/player/../../functions/AnsiPrint/AnsiPrint.h \
+ src/gameprocess/gameover/../../gameobjects/room/room.h \
+ src/gameprocess/gameover/../../gameobjects/room/../../controller/enviroment.h \
+ src/gameprocess/gameover/../../gameobjects/room/../../functions/position/position.h \
+ src/gameprocess/gameover/../../gameobjects/room/../enemy/enemy.h \
+ src/gameprocess/gameover/../../gameobjects/room/../enemy/../../gamecore/gamestate.h \
+ src/gameprocess/gameover/../../gameobjects/room/../enemy/../gameobject.h \
+ src/gameprocess/gameover/../../gameobjects/room/../box/box.h \
+ src/gameprocess/gameover/../../gameobjects/room/../box/../gameobject.h \
+ src/gameprocess/gameover/../../gameobjects/room/roomstate.h \
+ src/gameprocess/gameover/../gameprocessstate.h \
+ src/gameprocess/gameover/../../functions/AnsiPrint/AnsiPrint.h

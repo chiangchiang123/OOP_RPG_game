@@ -5,11 +5,20 @@
 
 // ACTION_INIT is a state where nothing has been input.
 
+Pause::Pause(){
 
+}
 
+Pause::~Pause(){
 
+}
 
-
+ProcessInfo Pause::run(InputState action){
+    if(action != ACTION_INIT){
+        return PAUSE_FINISH;
+    }
+    return CONTINUE;
+}
 
 
 

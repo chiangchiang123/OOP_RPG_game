@@ -1,0 +1,22 @@
+obj/gameprocess/gameclear/gameclear.o: \
+ src/gameprocess/gameclear/gameclear.cpp \
+ src/gameprocess/gameclear/gameclear.h \
+ src/gameprocess/gameclear/../gameprocess.h \
+ src/gameprocess/gameclear/../../gamecore/gamestate.h \
+ src/gameprocess/gameclear/../../gameobjects/player/player.h \
+ src/gameprocess/gameclear/../../gameobjects/player/../../gamecore/gamestate.h \
+ src/gameprocess/gameclear/../../gameobjects/player/../gameobject.h \
+ src/gameprocess/gameclear/../../gameobjects/player/../../functions/position/position.h \
+ src/gameprocess/gameclear/../../gameobjects/player/playerstate.h \
+ src/gameprocess/gameclear/../../gameobjects/player/../../functions/AnsiPrint/AnsiPrint.h \
+ src/gameprocess/gameclear/../../gameobjects/room/room.h \
+ src/gameprocess/gameclear/../../gameobjects/room/../../controller/enviroment.h \
+ src/gameprocess/gameclear/../../gameobjects/room/../../functions/position/position.h \
+ src/gameprocess/gameclear/../../gameobjects/room/../enemy/enemy.h \
+ src/gameprocess/gameclear/../../gameobjects/room/../enemy/../../gamecore/gamestate.h \
+ src/gameprocess/gameclear/../../gameobjects/room/../enemy/../gameobject.h \
+ src/gameprocess/gameclear/../../gameobjects/room/../box/box.h \
+ src/gameprocess/gameclear/../../gameobjects/room/../box/../gameobject.h \
+ src/gameprocess/gameclear/../../gameobjects/room/roomstate.h \
+ src/gameprocess/gameclear/../gameprocessstate.h \
+ src/gameprocess/gameclear/../../functions/AnsiPrint/AnsiPrint.h

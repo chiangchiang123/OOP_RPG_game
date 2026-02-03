@@ -10,8 +10,9 @@ public:
 
     // Complete the Dragon class with reference to the Enemy class.
 
+    Position nextPosition();
 
-
+    void render();
 
 
 

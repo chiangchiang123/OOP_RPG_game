@@ -31,9 +31,13 @@ public:
 
     void hurt(int damage);
 
+    void heal_way(int amount);
+
     std::string getName();
 
     virtual void render() = 0;
+
+    void changeability();
 };
 
 #endif
