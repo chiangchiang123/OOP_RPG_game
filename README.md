@@ -1,204 +1,130 @@
-# Programming Assignment #7
+# 終端機 RPG 遊戲
 
-**Due:2024/6/11 23:59:59**
+以 C++ 開發、在終端機中執行的 2D RPG 遊戲。玩家在地圖上移動探索、切換房間、與怪物進行回合制戰鬥、解開推箱子謎題，最後擊敗最終頭目「龍」通關。
 
-NCCU OOP 112 spring
+本專案為國立政治大學 112 學年度下學期「物件導向程式設計」課程的期末系列作業。課程提供基礎框架（畫面輸出、地圖資料格式、部分類別介面），遊戲流程控制與延伸關卡由我實作。原始作業說明保留於 [README_ASSIGNMENT_ZH.md](README_ASSIGNMENT_ZH.md)（中文）與 [README_ASSIGNMENT.md](README_ASSIGNMENT.md)（英文）。
 
-author: @organic_san at 2024/4/29
+## 編譯與執行
 
----
+需要 Linux（或 WSL）環境與支援 C++17 的 `g++`。
 
-## Topic: Building a Console RPG Game (Part 3)
-## Objective: Use virtual class to establish the MVC architecture for the game
+```bash
+make        # 編譯，執行檔輸出至 output/rpg-game
+make run    # 編譯並執行
+make clean  # 清除編譯產物
+```
 
-## Description
+建議將終端機視窗放大，以完整顯示 35 × 20 格的遊戲畫面。
 
-### Game Objective
+## 操作方式
 
-Create a small RPG game using the console, including processes such as entering the game, moving, switching rooms, battling, and ending.
-
-Upon entering the game, the player will enter a room constructed of grid units of 35 * 20, which represents the map in the game. The player can use WASD keys for up, down, left, and right movements respectively. The player icon, labeled as "PL," will move within the room accordingly and will be obstructed by walls.
-
-Rooms can be switched by moving to the left or right side of the current room. For this assignment, only horizontal room switching is considered, and vertical room switching is not. Rooms are connected horizontally via an id parameter. The room with the id of 0 is the leftmost room, and as you move right, the id increases by 1. Conversely, as you move left, the id decreases by 1. However, it's not possible to move to a room that does not exist.
-
-Enemies with self-moving capabilities will appear in the game, requiring the design of monster movement patterns. Upon encountering a monster, the game will enter battle process. At this point, the player can choose from four options in a menu: Attack, Defend, Force Attack, and Heal. Detailed differences will be explained in subsequent assignments.
-
-If the player is defeated by a monster, the game enters a game over state. Monsters can be set as final boss, and defeating an enemy marked as the final boss will lead to a game clear state.
-
-A full version of the game can be played by executing this program:<br>
-`./example/rpg-game-full-example`
-
-### Objectives for this Assignment
-
-The goal of this assignment is to establish the MVC architecture for the game. The MVC architecture separates the Model, View, and Controller components.
-
-In this assignment, we will package behaviors such as `Move`, `Battle`, and `Pause` into different classes that inherit from the `GameProcessBase Class`, and control them through the `Controller Class`.
-
-First, we need to move the movement handling on the map from the Controller to the Move Class in `gameprocess/move`, and use the returned status in `GameProcess::ProcessInfo` to inform the Controller of the next steps:
-
-- `CONTINUE`
-- `MOVE_FINISH_ROOMCHANGE_LEFT`
-- `MOVE_FINISH_ROOMCHANGE_RIGHT`
-- `MOVE_FINISH_PAUSE`
-- `MOVE_FINISH_BATTLE`
-
-The `Controller` will receive different `ProcessInfo` and perform corresponding actions, such as state transitions or room changing.
-
-Next, design the `Battle Class`. When the game enters battle mode, the initial state is `ACTION_SELECTING`, and it will cycle between `ACTION_SELECTING` -> `TURN_END` -> `ACTION_SELECTING` until one side's health reaches 0. The game then enters the `ENEMY_DEAD` or `PLAYER_DEAD` state to show the battle results, returning the outcome to the `Controller`, which handles the next steps.
-
-In the `Move` Process, when the player and the enemy are at the same coordinates, it will enter the `Battle` Process. During the battle, player can navigate the menu using W and S to choose tactics and press the confirm key to execute them. Switching the menu up and down uses `W` for up and `S` for down, with `Enter` or space bar for confirmation. All state transitions need to wait for the confirmation key before moving to the next state (i.e., pages displaying turn results and battle results cannot flash in one frame and need to wait for the confirmation key before switching).
-
-During battle, player and enemy can choose from:
-
-1. Attack
-2. Defend
-3. Force Attack
-
-Enemy will randomly and evenly choose from these three actions. To enhance gameplay, player can also choose:
-
-4. Heal
-
-The damage calculation during battle is as follows:
-
-1. When using Attack, damage dealt = character damage * `ATTACK_MULTIPLIER`
-2. When using Force Attack, damage dealt = character damage * `FORCE_ATTACK_MULTIPLIER`
-3. No damage is dealt when using Defend or Heal.
-
-4. When the opponent uses Defend, damage dealt = calculated damage / `DEFEND_MULTIPLIER`
-5. When the opponent uses Force Attack or Heal, damage dealt = calculated damage * `FORCE_ATTACK_MULTIPLIER`
-
-After the battle, if the player loses, the game ends with the `GameOver` Process. If the player wins and the enemy is the "last boss", the game ends with the `GameClear` Process. If not, it returns to the `Move` Process.
-
-By default, the `Slime`s in the second room is not the "last boss", while the `Dragon` in the third room is the "last boss".
-
-The `Battle Class` description is above.
-
-Next, complete the `Pause Class`. Only consider entering the `Pause` Process during the `Move` Process. The default `Pause` key is the esc key. Pressing esc enters the `Pause` Process, and pressing any key returns to the game state.
-
-Finally, for the `GameClear Class` and `GameOver Class`, no internal design adjustments are needed. Simply add the processes to the `Controller`.
-
-After these steps, the rendering part will be handled by the `render()` function of each class. In the `Controller`'s `render()`, just call the current Process's `render()`. All `render()` functions are designed and do not require output formatting adjustments.
-
-### Tasks to Complete
-
-- Based on the differences between the `assign 6 code` commit (92e17a3) and the `assign 7 code` commit (c859cfc) in the git log, update your completed version of assign6.
-  Specifically, compare based on [this URL](https://github.com/oopnccucs/assign7/commit/c859cfc7337d23e81f5e8035a8f448298b700a33) on GitHub, or use `$git checkout <commit-hash>` to switch and compare commits.
-
-- Move the `Move` related behavior from the `Controller` to `gameprocess/move`.
-- Complete the design of `Battle` as described.
-- Complete the design of `Pause` as described.
-- Add Process flow control logic to the `controller`.
-- Congratulations on completing all assignments for this semester!
-
-- Extra Bonus Factors: You can extend the game's structure, for example, by adding an opening scene, making battles more interesting, or incorporating a level system. Please describe any adjustments made to the game elements in the bonus.txt file. Additional points can be earned based on the functionality and completeness of the content.
-
-## Sample Output
-
-Refer to the execution result of `./example/rpg-game-full-example`. If successful, the following image will appear:
-
-![pic](https://i.imgur.com/lhKgeVc.png)
-
-`WW` represents grass, `██` represents walls, `DR` represents doors, and `PL` represents the player.
-
-The names and types of field objects are recorded in `./src/gameobjects/room/roomstate.h`.
-
-During map movement, pressing the esc key will enter pause mode:
-
-![pic](https://i.imgur.com/uX8z5Kd.png)
-
-In pause mode, pressing any key will return to map movement mode.
-
-Moving to the right edge of the room will move to the second room. When moving to the second room, the following result will appear:
-
-![pic](https://i.imgur.com/9By0Wzi.png)
-
-`WW` represents grass, `▲▲` represents rocks, `==` represents slimes, and `PL` represents the player.
-
-Slimes move one square in a random direction every frame, not blocked by grass but blocked by rocks. When the player and the slime overlap, combat mode starts.
-
-In battle mode, the following result will appear:
-
-![pic](https://i.imgur.com/LOVQmNc.png)
-
-Players can use W and S to navigate the menu. Refer to the above description or run the program to confirm the detailed process.
-
-Moving to the third room will result in:
-
-![pic](https://i.imgur.com/vpGXOVT.png)
-
-`██` represents walls, `▲▲` represents rocks, `DR` represents doors, `Dn` represents the dragon, `PL` represents the player, and `~~` or `……` represents water.
-
-The dragon does not move.
-
-When the player wins/loses against the dragon, the game ends with a Game Clear/Game Over screen:
-
-![pic](https://i.imgur.com/w9sR40f.png)
-
-Player dealing damage to the dragon
-
-![pic](https://i.imgur.com/Z8ou9Wx.png)
-
-Player wins the battle
-
-![pic](https://i.imgur.com/2kxsgQK.png)
-
-Game Clear
-
-
-## Grading Criteria
-
-| Grading Criteria | Score |
+| 按鍵 | 功能 |
 | - | - |
-| File Upload | 20 pt |
-| Compilation Successful | 15 pt |
-| Enter battle when the player (PL) overlaps with slime or dragon | 15 pt |
-| Battle process and rules match the specification | 10 pt |
-| Enter pause state when esc key is pressed in map movement state | 15 pt |
-| Complete GameOver and GameClear processes | 15 pt |
-| Implement MVC architecture using virtual class | 10 pt |
-| **Total** | **100 pt** |
-| Additional Game Design |	10 ~ 30 pt |
-| **Total** |	**130 pt** |
+| `W` `A` `S` `D` | 上、左、下、右移動；戰鬥中以 `W` / `S` 切換選項 |
+| `Enter` / 空白鍵 | 確認 |
+| `Esc` | 暫停（在地圖移動時） |
 
-Note: There are no restrictions on the bonus elements. Please describe further design for this game in the bonus.txt file. Extra points will be awarded based on the added content and its completeness.
+## 遊戲內容
 
+### 地圖
 
-## Assignment Directory
-`/usr/local/class/oop/assign/assign7`
-or https://github.com/oopnccucs/assign7
+共 8 個房間，以上下左右四個方向連通：
 
+```
+                        [ 2 寶箱房 ]
+                             │
+[ 0 隱藏房 ]─[ 1 起點 ]─[ 3 史萊姆 ]─[ 5 龍 ]
+                             │
+                        [ 4 方塊房 ]
+```
 
-## Submission Method
-In the OOP server, under the assign7 folder, input:
+（房間 0 需觸發彩蛋才會開啟）
 
-/usr/local/class/oop/bin/submit 7
+### 戰鬥
 
-to submit the assignment.
+玩家碰到怪物即進入回合制戰鬥，每回合可選擇：
 
+| 行動 | 效果 |
+| - | - |
+| Force Attack 強力攻擊 | 造成高傷害，但自己受到的傷害也會加倍 |
+| Attack 攻擊 | 造成一般傷害 |
+| Defend 防禦 | 不造成傷害，受到的傷害減少 |
+| Heal 治療 | 回復血量，但受到的傷害加倍 |
 
-## Files in the Assignment Directory
+敵人會在攻擊、強力攻擊、防禦之中隨機選擇。
 
-src
-| -- gamecore: input conversion processing and game process calls
-|
-| -- functions
-|
-| -- controller*: Overall game flow control
-|
-| -- gameobjects: game objects and room definitions
-|
-| ---/_ gameprocess*: split game processes into different instances
-|     | -- move*: handling movement
-|     | -- pause*: handling pause
-|     | -- battle*: handling battles
-|     | -- gameover*: handling game over
-|     | -- gameclear*: handling game clear
-|
+### 遊戲流程
 
-*: Main focus of this assignment
+1. 從房間 1 出發，前往房間 3 擊敗兩隻會隨機移動的史萊姆。
+2. 史萊姆全滅後，房間 4 會出現 4 個不同顏色的方塊。
+3. 將方塊推過房間 3、推進房間 2，放到指定位置。完成後房間 2 的牆壁會改變，才能取得寶箱。
+4. 打開寶箱獲得鑽石：攻擊力、最大血量、治療量皆提升為兩倍，回滿血量並更換外觀。
+5. 前往房間 5 挑戰最終頭目「龍」，擊敗即通關；在任何戰鬥中落敗則遊戲結束。
 
-## Implementation Notes
+此外，地圖中藏有一個彩蛋，觸發後會開啟隱藏房間並改變角色顏色。
 
-Compile: `$make`
+## 程式架構
 
-Run: `$make run`
+### 遊戲流程：以多型實作的狀態機
+
+```
+              Controller（持有 GameProcessBase* currentProcess）
+                    │  ▲
+     呼叫 run(input) │  │ 回傳 ProcessInfo，Controller 據此切換階段
+                    ▼  │
+                GameProcessBase（抽象類別）
+                         │
+   ┌───────┬────────┬───────┬─────────┬──────────┬───────────┐
+  Move   Battle   Pause  OpenBox  GameOver  GameClear
+```
+
+- `GameProcessBase` 只定義兩個純虛擬函式：`run(InputState)` 處理輸入、`render()` 繪製畫面。
+- 每個遊戲階段都是獨立類別，處理完輸入後回傳 `ProcessInfo` 狀態碼（如 `MOVE_FINISH_BATTLE`、`BATTLE_FINISH_PLAYER_WIN`）。
+- `Controller` 只持有基底類別指標，依狀態碼建立下一個階段物件，不需知道各階段的內部邏輯。新增階段時（例如 `OpenBox`）只需新增一個類別與對應的狀態碼。
+
+戰鬥本身也是一個小型狀態機：`ACTION_SELECTING → TURN_END → ACTION_SELECTING …`，直到一方血量歸零後進入 `ENEMY_DEAD` 或 `PLAYER_DEAD`。
+
+### 遊戲物件繼承體系
+
+```
+GameObject（座標、血量、攻擊力）
+├── Player
+├── Enemy（抽象類別，純虛擬 nextPosition()）
+│   ├── Slime   每回合隨機移動
+│   └── Dragon  固定不動，最終頭目
+├── Block       可被推動、可跨房間的方塊
+└── Box         寶箱
+```
+
+### 目錄結構
+
+```
+src/
+├── main.cpp
+├── gamecore/       讀取鍵盤輸入並轉換為遊戲指令
+├── controller/     Controller：整體流程控制
+├── gameprocess/    各遊戲階段
+│   ├── move/       地圖移動、推方塊、換房間
+│   ├── battle/     回合制戰鬥
+│   ├── pause/      暫停
+│   ├── openbox/    開寶箱與角色升級
+│   ├── gameover/   遊戲結束
+│   └── gameclear/  通關
+├── gameobjects/    遊戲物件（玩家、敵人、方塊、寶箱、房間與地圖資料）
+└── functions/      共用工具（座標、ANSI 彩色輸出）
+```
+
+## 超出作業要求的延伸設計
+
+作業原本只要求左右相連的 3 個房間與基本戰鬥流程，以下為我額外設計的內容：
+
+- 四向連通的 8 房間地圖
+- 跨房間推箱子謎題（新增 `Block` 類別）
+- 寶箱與角色升級系統（新增 `Box` 類別與 `OpenBox` 遊戲階段）
+- 隱藏彩蛋房間
+
+## 未來改進方向
+
+- `Move` 中四個方向的移動與推方塊邏輯重複，可改為以方向向量為參數的單一函式。
+- 謎題答案座標與房間編號目前寫在 `Controller` 中，應抽離到關卡資料或獨立的關卡類別。
+- 改用智慧指標（`std::unique_ptr`）管理物件生命週期。
